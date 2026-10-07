@@ -1,0 +1,3 @@
+# TEST LINK: the site is shared privately for now. Replace this file at the real launch.
+User-agent: *
+Disallow: /
