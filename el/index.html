@@ -160,8 +160,11 @@ a{color:inherit}
 }
 
 /* ---------- the journey (scroll hero) ---------- */
-.hero{position:relative;height:1000vh;background:var(--sky)}
-.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.hero{position:relative;height:1000vh;background:#F4F1EA}
+/* lvh = the screen with the phone's browser bars hidden, so the video always covers the full screen and no gap opens below it */
+.stage{position:sticky;top:0;height:100vh;height:100lvh;overflow:hidden}
+/* where the journey ends, the video fades softly into Our Story instead of a hard edge */
+.scrub #story::before{content:"";position:absolute;left:0;right:0;top:-110px;height:110px;pointer-events:none;z-index:2;background:linear-gradient(rgba(244,241,234,0),rgba(244,241,234,.75) 60%,#F4F1EA)}
 .chapter{position:absolute;inset:0}
 .scene{position:absolute;inset:0;width:100%;height:100%;opacity:0;will-change:opacity}
 .chapter:first-child .scene{opacity:1}
@@ -230,8 +233,9 @@ a{color:inherit}
 @media (max-width:720px){
   .hero{height:900vh}
   .scrim{background:linear-gradient(0deg,rgba(6,16,30,.72) 0%,rgba(6,16,30,.5) 30%,rgba(6,16,30,.12) 58%,rgba(6,16,30,0) 72%),linear-gradient(180deg,rgba(6,16,30,.32) 0%,rgba(6,16,30,0) 22%)}
-  .band{left:20px;right:20px;width:auto;top:auto;bottom:calc(9svh + 16px);transform:none}
-  .band.settle{width:auto;bottom:calc(5svh + 12px)}
+  /* captions measured from the bottom of the visible screen (lvh - svh = the browser bar height), clear of the exit fade */
+  .band{left:20px;right:20px;width:auto;top:auto;bottom:calc(100lvh - 100svh + 9svh + 16px);transform:none}
+  .band.settle{width:auto;bottom:calc(100lvh - 100svh + 9svh + 16px)}
   .band::before{inset:-40% -12% -30% -12%;background:radial-gradient(ellipse 70% 60% at 45% 55%,rgba(6,16,30,.5) 0%,rgba(6,16,30,.3) 45%,rgba(6,16,30,0) 100%)}
   .band h2{font-size:clamp(32px,9vw,44px);max-width:none}
   .band.settle h2{font-size:clamp(26px,7.4vw,36px)}
@@ -1052,6 +1056,7 @@ const GATES = [
 let scrubOn = false;
 function enableScrub() {
   if (scrubOn) return; scrubOn = true;
+  document.documentElement.classList.add('scrub');
   initHeroOnce();
   addEventListener('scroll', onScroll, { passive: true });
   chapters.forEach(c => { c.op = -1; c.lp = -1; });
@@ -1064,6 +1069,7 @@ function enableScrub() {
 }
 function disableScrub() {
   if (!scrubOn) return; scrubOn = false;
+  document.documentElement.classList.remove('scrub');
   removeEventListener('scroll', onScroll);
   if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
 }
