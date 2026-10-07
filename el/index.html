@@ -166,16 +166,19 @@ a{color:inherit}
 /* where the journey ends, the video fades softly into Our Story instead of a hard edge */
 .scrub #story::before{content:"";position:absolute;left:0;right:0;top:-110px;height:110px;pointer-events:none;z-index:2;background:linear-gradient(rgba(244,241,234,0),rgba(244,241,234,.75) 60%,#F4F1EA)}
 .chapter{position:absolute;inset:0}
-.scene{position:absolute;inset:0;width:100%;height:100%;opacity:0;will-change:opacity}
-.chapter:first-child .scene{opacity:1}
-.scene .mv{transform-box:view-box;will-change:transform}
-.scene .box{--kb:clamp(0,(var(--lp,0) - var(--t,0))*3.2,1);opacity:var(--kb);transform:translateY(calc((1 - var(--kb))*-120px))}
-#hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:translateZ(0);transition:opacity 1s var(--ease-out);pointer-events:none}
-/* the joined Kling journey plays behind every chapter; the drawn scenes are only the fallback if it never loads */
-.stage.poster-ready #hero-video,.stage.video-ready #hero-video{opacity:1}
-.stage.poster-ready .chapter:first-child .scene{visibility:hidden}
-.stage.video-ready .scene{visibility:hidden}
-.still{display:none}
+/* while the video streams in, each chapter shows a still frame from its own real clip (never anything drawn);
+   once the video is ready the stills step aside, and if it never arrives the journey still works with them */
+.still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;will-change:opacity}
+.chapter:first-child .still{opacity:1}
+.chapter:last-child .still{object-position:72% 50%}
+#hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:translateZ(0);transition:opacity .6s var(--ease-out);pointer-events:none}
+.stage.video-ready #hero-video{opacity:1}
+.stage.video-ready .still{visibility:hidden}
+.hero .stage{background:#1d2a33}
+/* layers: footage (stills or video), then the shade, then words, map and cue */
+.stage .scrim{z-index:1}
+.stage .band{z-index:2}
+.stage .route,.stage .cue{z-index:3}
 /* legibility base: a soft shade on the left and bottom so white words always read over bright sky */
 .stage{--tshadow:0 1px 2px rgba(5,12,24,.9),0 3px 14px rgba(5,12,24,.55),0 10px 44px rgba(5,12,24,.5)}
 .scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(6,16,30,.55) 0%,rgba(6,16,30,.42) 30%,rgba(6,16,30,.16) 50%,rgba(6,16,30,0) 66%),linear-gradient(0deg,rgba(6,16,30,.28) 0%,rgba(6,16,30,0) 30%)}
@@ -257,8 +260,8 @@ a{color:inherit}
   .stage{position:relative;height:auto;overflow:visible;display:flex;flex-direction:column;gap:16px}
   .chapter{position:relative;inset:auto;margin:0 16px;border-radius:10px;overflow:hidden;min-height:clamp(420px,118vw,560px);display:flex;align-items:flex-end;background:var(--sky)}
   .chapter::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(6,16,30,0) 22%,rgba(6,16,30,.72) 100%)}
-  .scene{display:none}
-  .still{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hero .stage{background:none}
+  .still{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1!important;visibility:visible!important}
   .chapter:last-child .still{object-position:72% 50%}
   .band{position:relative;z-index:1;left:auto;top:auto;transform:none;opacity:1!important;visibility:visible!important;--k:1!important;width:auto;padding:24px 20px}
   .band::before{display:none}
@@ -516,19 +519,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 
     <!-- 01 fields -->
     <div class="chapter" data-s="0" data-e=".25">
-      <svg class="scene" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <defs>
-          <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3FA9E6"/><stop offset=".62" stop-color="#B4E2F8"/></linearGradient>
-          <linearGradient id="gnd1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9CC25A"/><stop offset="1" stop-color="#6E9E34"/></linearGradient>
-          <radialGradient id="sun1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".3" stop-color="#FFFFFF" stop-opacity=".75"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
-        </defs>
-        <rect width="1600" height="900" fill="url(#sky1)"/>
-        <g class="mv" style="transform:translateY(calc(var(--lp,0)*-110px))"><circle cx="1150" cy="540" r="270" fill="url(#sun1)"/><circle cx="1150" cy="540" r="64" fill="#FFFFFF"/></g>
-        <path d="M0 560 C220 520 380 540 560 528 S900 500 1100 532 1450 520 1600 540 V600 H0Z" fill="#4E93C4"/>
-        <rect y="568" width="1600" height="332" fill="url(#gnd1)"/>
-        <g class="mv rows" id="rows" style="transform-origin:960px 568px;transform:scale(calc(1 + var(--lp,0)*.55))"></g>
-      </svg>
-      <img class="still" src="../assets/still-1.jpg" alt="" aria-hidden="true" loading="lazy" width="1200" height="675">
+      <img class="still" src="../assets/still-1.jpg" alt="" aria-hidden="true" width="1200" height="675">
       <div class="band b1" data-a="0" data-b=".21" data-fx="rise">
         <div class="panel">
           <p class="kick mono"><em>01</em> Τα χωράφια</p>
@@ -540,31 +531,6 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 
     <!-- 02 the road north -->
     <div class="chapter" data-s=".25" data-e=".5">
-      <svg class="scene" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <defs><linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3FA9E6"/><stop offset=".6" stop-color="#BDE6F9"/></linearGradient></defs>
-        <rect width="1600" height="900" fill="url(#sky2)"/>
-        <circle cx="300" cy="170" r="54" fill="#FFFFFF"/>
-        <rect x="960" y="536" width="640" height="48" fill="#0D5EAF"/>
-        <path d="M0 548 C160 494 300 462 470 494 S760 545 960 540 L960 600 H0Z" fill="#9CC4DE"/>
-        <g stroke="#0B1F3A" stroke-width="2" stroke-linejoin="round">
-          <path d="M1290 540 V468 H1342 V540Z M1294 468 V456 H1304 V468Z M1311 468 V456 H1321 V468Z M1328 468 V456 H1338 V468Z" fill="#fff"/>
-          <path d="M1180 540 V510 H1230 V540Z M1238 540 V496 H1270 V540Z M1360 540 V504 H1420 V540Z M1430 540 V516 H1490 V540Z M1500 540 V500 H1530 V540Z" fill="#fff"/>
-          <path d="M1300 498 h6 M1326 498 h6" fill="none"/>
-        </g>
-        <rect y="584" width="1600" height="316" fill="#EEF3F7"/>
-        <rect y="660" width="1600" height="110" fill="#1E2630"/>
-        <g class="mv" style="transform:translateX(calc(var(--lp,0)*-420px))"><path d="M0 715 H2400" stroke="#FFFFFF" stroke-width="5" stroke-dasharray="70 60"/></g>
-        <g class="mv" style="transform:translate(calc(var(--lp,0)*860px),calc(var(--lp,0)*-6px))">
-          <g transform="translate(150 600)" stroke="#0B1F3A" stroke-width="2.4" stroke-linejoin="round">
-            <rect x="0" y="0" width="190" height="92" rx="3" fill="#fff"/>
-            <rect x="0" y="58" width="190" height="12" fill="#0D5EAF" stroke="none"/>
-            <path d="M190 30 H238 L262 62 V92 H190Z" fill="#0D5EAF"/>
-            <path d="M200 38 H232 L248 60 H200Z" fill="#BDE6F9"/>
-            <circle cx="46" cy="98" r="16" fill="#0B1F3A"/><circle cx="216" cy="98" r="16" fill="#0B1F3A"/>
-            <circle cx="46" cy="98" r="6" fill="#fff"/><circle cx="216" cy="98" r="6" fill="#fff"/>
-          </g>
-        </g>
-      </svg>
       <img class="still" src="../assets/still-2.jpg" alt="" aria-hidden="true" loading="lazy" width="1200" height="675">
       <div class="band b2" data-a=".26" data-b=".46" data-fx="snap" data-spread=".45">
         <div class="panel">
@@ -577,23 +543,6 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 
     <!-- 03 loutraki -->
     <div class="chapter" data-s=".5" data-e=".75">
-      <svg class="scene" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <defs><linearGradient id="sky3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4DB0E8"/><stop offset=".55" stop-color="#C6EAFA"/></linearGradient>
-        <linearGradient id="sea3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A7AC9"/><stop offset="1" stop-color="#0D5EAF"/></linearGradient></defs>
-        <rect width="1600" height="900" fill="url(#sky3)"/>
-        <circle cx="820" cy="210" r="46" fill="#FFFFFF"/>
-        <path d="M0 470 C140 396 260 372 420 426 S640 468 780 470 H0Z" fill="#3E7FB5"/>
-        <rect y="470" width="1600" height="190" fill="url(#sea3)"/>
-        <g class="mv" style="transform:translateX(calc(var(--lp,0)*-60px))" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M120 520 h60 M420 560 h90 M780 510 h50 M1100 580 h80 M1400 530 h60 M260 620 h70 M960 630 h60"/></g>
-        <rect y="660" width="1600" height="240" fill="#F3F7FA"/>
-        <rect y="660" width="1600" height="10" fill="#D5E2EC"/>
-        <g stroke="#0E1116" stroke-width="2.2" stroke-linejoin="round">
-          <g class="mv box" style="--t:0"><rect x="980" y="540" width="200" height="120" rx="2" fill="#FFFFFF"/><rect x="1072" y="540" width="16" height="120" fill="#0D5EAF" stroke="none"/></g>
-          <g class="mv box" style="--t:.18"><rect x="1190" y="560" width="180" height="100" rx="2" fill="#F4F8FB"/><rect x="1272" y="560" width="16" height="100" fill="#0D5EAF" stroke="none"/></g>
-          <g class="mv box" style="--t:.36"><rect x="1030" y="436" width="170" height="104" rx="2" fill="#F4F8FB"/><rect x="1107" y="436" width="16" height="104" fill="#79C3EC" stroke="none"/></g>
-          <g class="mv box" style="--t:.54"><rect x="1210" y="470" width="140" height="90" rx="2" fill="#FFFFFF"/><rect x="1272" y="470" width="16" height="90" fill="#0D5EAF" stroke="none"/></g>
-        </g>
-      </svg>
       <img class="still" src="../assets/still-3.jpg" alt="" aria-hidden="true" loading="lazy" width="1200" height="675">
       <div class="band b3" data-a=".51" data-b=".71" data-fx="drift">
         <div class="panel">
@@ -606,29 +555,6 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 
     <!-- 04 to you -->
     <div class="chapter" data-s=".75" data-e="1">
-      <svg class="scene" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <defs><linearGradient id="sky4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3FA9E6"/><stop offset="1" stop-color="#9ED8F5"/></linearGradient></defs>
-        <rect width="1600" height="900" fill="url(#sky4)"/>
-        <rect x="880" y="150" width="720" height="584" fill="#FFFFFF"/>
-        <rect x="880" y="140" width="720" height="16" fill="#0D5EAF"/>
-        <rect x="1060" y="230" width="270" height="470" rx="135" ry="135" fill="#E6F2FA"/>
-        <rect x="1080" y="250" width="230" height="450" rx="115" ry="115" fill="#0D5EAF"/>
-        <path d="M1195 250 V700" stroke="#0A4A8C" stroke-width="4"/>
-        <circle cx="1220" cy="500" r="8" fill="#FFFFFF"/>
-        <rect x="1410" y="470" width="110" height="140" fill="#0D5EAF"/>
-        <path d="M1465 470 V610 M1410 540 H1520" stroke="#fff" stroke-width="5"/>
-        <g class="mv" style="transform:translateX(calc(var(--lp,0)*-14px))">
-          <path d="M880 150 C930 210 980 190 1010 260 S960 330 990 380" stroke="#3E8E3A" stroke-width="4" fill="none"/>
-          <g fill="#79C3EC"><circle cx="905" cy="175" r="22"/><circle cx="940" cy="205" r="18"/><circle cx="975" cy="190" r="16"/><circle cx="1000" cy="232" r="19"/><circle cx="968" cy="262" r="15"/><circle cx="1002" cy="290" r="13"/><circle cx="975" cy="330" r="12"/><circle cx="925" cy="240" r="13"/></g>
-          <g fill="#0D5EAF"><circle cx="955" cy="170" r="10"/><circle cx="1015" cy="262" r="9"/><circle cx="915" cy="212" r="9"/></g>
-        </g>
-        <rect x="1000" y="700" width="390" height="34" fill="#DCE6EE"/>
-        <rect y="734" width="1600" height="166" fill="#EEF3F7"/>
-        <g class="mv" style="transform:translateY(calc((1 - min(1, var(--lp,0)*2.2))*-160px))">
-          <ellipse cx="1150" cy="702" rx="100" ry="6" fill="#0E1116" opacity=".15"/>
-          <g stroke="#0E1116" stroke-width="2.2" stroke-linejoin="round"><rect x="1060" y="604" width="180" height="96" rx="2" fill="#FFFFFF"/><rect x="1142" y="604" width="16" height="96" fill="#0D5EAF" stroke="none"/><rect x="1080" y="624" width="44" height="26" fill="#E6F3FB" stroke-width="1.6"/></g>
-        </g>
-      </svg>
       <img class="still" src="../assets/still-4.jpg" alt="" aria-hidden="true" loading="lazy" width="1200" height="675">
       <div class="band b4 settle" data-a=".77" data-b="1" data-fx="settle" data-ramp=".07">
         <div class="panel">
@@ -860,29 +786,11 @@ function videoTime(p) {
 }
 
 const hero = $('#journey'), stage = $('#stage'), video = $('#hero-video'), flash = $('#flash');
-const chapters = $$('.chapter').map(el => ({ el, scene: $('.scene', el), s: +el.dataset.s, e: +el.dataset.e, op: -1, lp: -1 }));
+const chapters = $$('.chapter').map(el => ({ el, scene: $('.still', el), s: +el.dataset.s, e: +el.dataset.e, op: -1, lp: -1 }));
 const bands = $$('.band').map(el => ({ el, a: +el.dataset.a, b: +el.dataset.b, ramp: el.dataset.ramp ? +el.dataset.ramp : 0, op: -1, k: -1 }));
 const trail = $('#trail'), dots = $$('.route .dot'), nowName = $('#nowName'), nowCo = $('#nowCo');
 const STOPS = [['01 Fields', '39.46°N 22.25°E'], ['02 Thessaloniki', '40.64°N 22.93°E'], ['03 Loutraki', '37.97°N 22.97°E'], ['04 Your place', '39.07°N 21.82°E']];
 
-/* ---------- cotton rows for scene one, seeded so every load matches ---------- */
-(function buildRows() {
-  const g = $('#rows'), r = rng(7);
-  const vx = 960, vy = 568;
-  let html = '';
-  for (let row = 0; row < 15; row++) {
-    const bx = -900 + row * 240;
-    html += `<path d="M${vx} ${vy} L${bx} 900" stroke="#3F6B1E" stroke-opacity=".35" stroke-width="1.6" fill="none"/>`;
-    for (let j = 0; j < 9; j++) {
-      const t = Math.pow((j + 1 + r() * .5) / 10, 1.6);
-      const x = vx + (bx - vx) * t, y = vy + (900 - vy) * t;
-      const sz = 2 + t * 13;
-      html += `<circle cx="${x.toFixed(1)}" cy="${(y - sz * .6).toFixed(1)}" r="${sz.toFixed(1)}" fill="#FFFFFF" stroke="#3F6B1E" stroke-opacity="${(.2 + t * .35).toFixed(2)}" stroke-width="${(.6 + t).toFixed(1)}"/>`;
-      if (sz > 6) html += `<circle cx="${(x + sz * .8).toFixed(1)}" cy="${(y - sz * .2).toFixed(1)}" r="${(sz * .62).toFixed(1)}" fill="#FFFFFF" stroke="#3F6B1E" stroke-opacity="${(.15 + t * .3).toFixed(2)}" stroke-width="${(.5 + t * .8).toFixed(1)}"/>`;
-    }
-  }
-  g.innerHTML = html;
-})();
 
 /* ---------- cotton fibers drifting in the light ---------- */
 (function buildFibers() {
