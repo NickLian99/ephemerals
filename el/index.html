@@ -778,7 +778,7 @@ const HAS_VIDEO = true;
 const TALL = matchMedia('(orientation: portrait)').matches;
 const VIDEO_URL = TALL ? '../assets/hero-journey-mobile.mp4' : '../assets/hero-journey.mp4';
 const POSTER_URL = TALL ? '../assets/hero-journey-mobile-poster.jpg' : '../assets/hero-journey-poster.jpg';
-const VIDEO_BYTES = TALL ? 5371281 : 14513278;   // every frame is a keyframe, so seeking never has to rebuild frames
+const VIDEO_BYTES = TALL ? 5471513 : 14901830;   // a full picture every 4 frames: sharp, and seeks stay fast
 const SEGS = [0, 4.917, 9.708, 14.5];
 function videoTime(p) {
   const i = Math.min(3, Math.floor(p / .25));
