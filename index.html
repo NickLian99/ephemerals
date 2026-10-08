@@ -68,7 +68,7 @@ a{color:inherit}
 
 /* ---------- the environment: one fixed layer behind everything ---------- */
 .env{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-.env i{position:absolute;border-radius:50%;filter:blur(80px);opacity:.6;will-change:transform}
+.env i{position:absolute;border-radius:50%;opacity:.6;will-change:transform}
 .env .sun{width:60vmax;height:60vmax;left:45%;top:-25%;background:radial-gradient(circle,#FFFFFF 0%,rgba(255,255,255,0) 70%);animation:envA 90s var(--ease-io) infinite alternate;animation-delay:-20s}
 .env .sea{width:70vmax;height:70vmax;left:-25%;top:40%;background:radial-gradient(circle,#8FD0F2 0%,rgba(143,208,242,0) 70%);animation:envB 110s var(--ease-io) infinite alternate;animation-delay:-45s}
 .env::after{content:"";position:absolute;inset:0;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
@@ -77,7 +77,7 @@ a{color:inherit}
 
 /* ---------- nav ---------- */
 .nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px clamp(16px,4vw,48px);color:var(--ink);transition:background .5s var(--ease-out),color .5s var(--ease-out)}
-.nav.solid{background:rgba(244,241,234,.94);backdrop-filter:blur(12px);color:var(--ink);box-shadow:0 1px 0 var(--line)}
+.nav.solid{background:rgba(244,241,234,.97);color:var(--ink);box-shadow:0 1px 0 var(--line)}
 .wordmark{font:800 15px/1 var(--f-display);letter-spacing:.01em;text-decoration:none;white-space:nowrap}
 .nav ul{display:flex;align-items:baseline;gap:28px;list-style:none;margin:0;padding:0}
 .nav a.lk{font:500 14px/1 var(--f-body);text-decoration:none;position:relative}
@@ -167,7 +167,7 @@ a{color:inherit}
 .chapter{position:absolute;inset:0}
 /* while the video streams in, each chapter shows a still frame from its own real clip (never anything drawn);
    once the video is ready the stills step aside, and if it never arrives the journey still works with them */
-.still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;will-change:opacity}
+.still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
 .chapter:first-child .still{opacity:1}
 .chapter:last-child .still{object-position:72% 50%}
 #hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:translateZ(0);transition:opacity .6s var(--ease-out);pointer-events:none}
@@ -181,15 +181,15 @@ a{color:inherit}
 /* legibility base: a soft shade on the left and bottom so white words always read over bright sky */
 .stage{--tshadow:0 1px 2px rgba(5,12,24,.9),0 3px 14px rgba(5,12,24,.55),0 10px 44px rgba(5,12,24,.5)}
 .scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(6,16,30,.55) 0%,rgba(6,16,30,.42) 30%,rgba(6,16,30,.16) 50%,rgba(6,16,30,0) 66%),linear-gradient(0deg,rgba(6,16,30,.28) 0%,rgba(6,16,30,0) 30%)}
-.flash{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 70% at 62% 45%,#FFFFFF 0%,rgba(240,248,253,.9) 45%,rgba(191,227,247,.65) 100%);opacity:0}
+.flash{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 70% at 62% 45%,#FFFFFF 0%,rgba(240,248,253,.9) 45%,rgba(191,227,247,.65) 100%);opacity:0;will-change:opacity}
 .fibers{position:absolute;inset:0;pointer-events:none}
 .fibers b{position:absolute;width:5px;height:5px;border-radius:50%;background:#fff;box-shadow:0 0 6px 2px rgba(255,255,255,.8);opacity:0;animation:fiber 18s linear infinite;animation-play-state:paused}
 .stage.live .fibers b{animation-play-state:running}
 @keyframes fiber{0%{transform:translate(0,0);opacity:0}12%{opacity:.75}85%{opacity:.5}100%{transform:translate(18vw,-46vh);opacity:0}}
 
 /* captions: no boxes, just bold white words over the footage, each with its own soft shade behind */
-.band{position:absolute;left:clamp(16px,6vw,96px);top:50%;transform:translateY(-46%);width:min(560px,calc(100vw - 32px));opacity:0;--k:0;color:#fff;--fg:#fff;text-shadow:var(--tshadow);isolation:isolate}
-.band::before{content:"";position:absolute;inset:-55% -60% -55% -45%;z-index:-1;pointer-events:none;opacity:calc(.7 + .3*var(--k));background:radial-gradient(ellipse 50% 50% at 42% 50%,rgba(6,16,30,.58) 0%,rgba(6,16,30,.48) 32%,rgba(6,16,30,.2) 64%,rgba(6,16,30,0) 100%)}
+.band{position:absolute;left:clamp(16px,6vw,96px);top:50%;transform:translateY(-46%);width:min(560px,calc(100vw - 32px));opacity:0;--k:0;color:#fff;--fg:#fff;text-shadow:var(--tshadow);isolation:isolate;will-change:opacity}
+.band::before{content:"";position:absolute;inset:-55% -60% -55% -45%;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 50% 50% at 42% 50%,rgba(6,16,30,.58) 0%,rgba(6,16,30,.48) 32%,rgba(6,16,30,.2) 64%,rgba(6,16,30,0) 100%)}
 .band.b1{opacity:1}
 .band .panel{position:relative}
 .band .kick{display:flex;align-items:baseline;gap:12px;color:#fff;font-weight:700;margin:0 0 14px;opacity:var(--k)}
@@ -214,7 +214,7 @@ a{color:inherit}
 .band.settle .row{--kb:clamp(0,(var(--k) - .78)*5,1);opacity:var(--kb);transform:translateY(calc((1 - var(--kb))*12px));display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
 
 /* the route map: no box, white lines and labels drawn straight over the footage */
-.route{position:absolute;right:clamp(16px,3vw,40px);top:96px;width:210px;color:#fff;filter:drop-shadow(0 1px 2px rgba(5,12,24,.85)) drop-shadow(0 4px 14px rgba(5,12,24,.45))}
+.route{position:absolute;right:clamp(16px,3vw,40px);top:96px;width:210px;color:#fff;filter:drop-shadow(0 1px 3px rgba(5,12,24,.9))}
 .route svg{display:block;width:100%;height:auto;overflow:visible}
 .route .trail-bg{fill:none;stroke:rgba(255,255,255,.75);stroke-width:1.3;stroke-dasharray:2 4}
 .route .trail{fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
@@ -776,7 +776,7 @@ const HAS_VIDEO = true;
 const TALL = matchMedia('(orientation: portrait)').matches;
 const VIDEO_URL = TALL ? 'assets/hero-journey-mobile.mp4' : 'assets/hero-journey.mp4';
 const POSTER_URL = TALL ? 'assets/hero-journey-mobile-poster.jpg' : 'assets/hero-journey-poster.jpg';
-const VIDEO_BYTES = TALL ? 2292768 : 8991188;
+const VIDEO_BYTES = TALL ? 5371281 : 14513278;   // every frame is a keyframe, so seeking never has to rebuild frames
 const SEGS = [0, 4.917, 9.708, 14.5];
 function videoTime(p) {
   const i = Math.min(3, Math.floor(p / .25));
@@ -795,7 +795,7 @@ const STOPS = [['01 Fields', '39.46°N 22.25°E'], ['02 Thessaloniki', '40.64°N
 (function buildFibers() {
   const f = $('#fibers'), r = rng(21);
   let html = '';
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 10; i++) {
     html += `<b style="left:${(r() * 90).toFixed(1)}%;top:${(40 + r() * 60).toFixed(1)}%;animation-duration:${(16 + r() * 14).toFixed(1)}s;animation-delay:-${(r() * 20).toFixed(1)}s;transform:scale(${(.5 + r() * .8).toFixed(2)})"></b>`;
   }
   f.innerHTML = html;
